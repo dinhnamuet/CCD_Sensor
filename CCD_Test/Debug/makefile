@@ -60,8 +60,8 @@ all: main-build
 main-build: CCD_Test.elf secondary-outputs
 
 # Tool invocations
-CCD_Test.elf CCD_Test.map: $(OBJS) $(USER_OBJS) D:\cube-ide-prj\CCD_Test\STM32L431RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "CCD_Test.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\cube-ide-prj\CCD_Test\STM32L431RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CCD_Test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+CCD_Test.elf CCD_Test.map: $(OBJS) $(USER_OBJS) D:\nam_CCD_Sensor\CCD_Test\STM32L431RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "CCD_Test.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\nam_CCD_Sensor\CCD_Test\STM32L431RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CCD_Test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

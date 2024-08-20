@@ -15,6 +15,15 @@
   *
   ******************************************************************************
   */
+
+/**
+ * TIM1 for SH, tim1 channel 1 generate pwm, tim1 channel 2 output compare no output (Trigger to tim15)
+ * TIM2 for ICG, tim2 channel 1 generate pwm, tim2 channel 2 output compare no output (Trigger to tim1)
+ * TIM15 for Phi M, tim15 channel 1 generate pwm
+ *
+ */
+
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -96,10 +105,10 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM15_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1); /* phi M */
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); /* SH */
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-  HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
+  HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2); /* ICG */
   HAL_TIM_OC_Start(&htim1, TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
@@ -185,9 +194,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 3;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 799;
+  htim1.Init.Period = 61999;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -217,7 +226,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 319;
+  sConfigOC.Pulse = 80;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -228,7 +237,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_ACTIVE;
-  sConfigOC.Pulse = 761;
+  sConfigOC.Pulse = 185;
   if (HAL_TIM_OC_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
