@@ -53,7 +53,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-
+struct ccd tcd1103;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,7 +85,6 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 	uint32_t i_time = 0;
-	struct ccd tcd1103;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

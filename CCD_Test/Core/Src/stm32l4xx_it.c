@@ -22,6 +22,7 @@
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ccd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,6 +57,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim2;
+extern struct ccd tcd1103;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -203,14 +205,14 @@ void SysTick_Handler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-	if (TIM2->SR & TIM_SR_CC2IF) {
-		GPIOC->ODR |= GPIO_PIN_12;
-		TIM2->SR &= ~TIM_SR_CC2IF;
-	} else if (TIM2->SR & TIM_SR_CC3IF) {
-		GPIOC->ODR &= ~GPIO_PIN_12;
-		TIM2->SR &= ~TIM_SR_CC3IF;
+	if (tcd1103.ICG->Instance->SR & TIM_SR_CC2IF) {
+		tcd1103.SH.port->ODR |= tcd1103.SH.pin_no;
+		tcd1103.ICG->Instance->SR &= ~TIM_SR_CC2IF;
+	} else if (tcd1103.ICG->Instance->SR & TIM_SR_CC3IF) {
+		tcd1103.SH.port->ODR &= ~tcd1103.SH.pin_no;
+		tcd1103.ICG->Instance->SR &= ~TIM_SR_CC3IF;
 	} else {
-		TIM2->SR &= ~TIM_SR_UIF;
+		tcd1103.ICG->Instance->SR &= ~TIM_SR_UIF;
 	}
   /* USER CODE END TIM2_IRQn 0 */
 //  HAL_TIM_IRQHandler(&TIM2);
