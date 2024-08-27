@@ -16,6 +16,12 @@
 #define T3	4000	/* Shift pulse width */
 #define t4	40		/* Pulse timing of ICG and M */
 
+#define ISR_LATENC_PULSE	12 /* Stack frame store and get ISR from the vector table */
+#define T2_PROCESS_PULSE	27 /* 27 assembly command */
+#define T3_PROCESS_PULSE	35 /* 35 assembly command */
+
+#define TIM1_CC_PROCESS_PULSE	30
+
 #pragma pack(1)
 typedef struct {
 	GPIO_TypeDef *port;

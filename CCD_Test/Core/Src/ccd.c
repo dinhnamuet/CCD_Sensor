@@ -5,6 +5,7 @@
  *      Author: dinhnamuet
  */
 #include "ccd.h"
+#include <math.h>
 
 static void ccd_reset(struct ccd *ccd_s) {
 	HAL_TIM_PWM_Stop(ccd_s->M, TIM_CHANNEL_1); 	/* phi M */
@@ -24,12 +25,13 @@ int ccd_init(struct ccd *ccd_s, TIM_HandleTypeDef *icg_pin, TIM_HandleTypeDef *m
 		ccd_s->ICG = icg_pin;
 		ccd_s->M = m_pin;
 		ccd_reset(ccd_s);
-		ccd_s->ICG->Instance->CCR2 = T2*8/100 - 1; /* T2 500ns, set SH high level on compare match occurs */
-		ccd_s->ICG->Instance->CCR3 = ccd_s->ICG->Instance->CCR2 + (T3*8/100); /* T3 4000ns, set SH Low level on compare match occurs */
-		ccd_s->ICG->Instance->CCR4 = ccd_s->ICG->Instance->CCR1 - ((ccd_s->M->Instance->PSC + 1) * ccd_s->M->Instance->CCR1/2) - 1;
+		ccd_s->ICG->Instance->CCR2 = ((T2*8/100 - 1) - ISR_LATENC_PULSE) - T2_PROCESS_PULSE; /* T2 500ns, set SH high level on compare match occurs */
+		ccd_s->ICG->Instance->CCR3 = ((T2*8/100 - 1) + (T3*8/100) - ISR_LATENC_PULSE) - T3_PROCESS_PULSE; /* T3 4000ns, set SH Low level on compare match occurs */
+		ccd_s->ICG->Instance->CCR4 = ccd_s->ICG->Instance->CCR1 - ((ccd_s->M->Instance->PSC + 1) * round((float)ccd_s->M->Instance->CCR1/2));
+		ccd_s->M->Instance->CCR2 = ccd_s->M->Instance->CCR1 - ISR_LATENC_PULSE - TIM1_CC_PROCESS_PULSE;
 		__HAL_TIM_ENABLE_IT(ccd_s->ICG, TIM_IT_CC2);
 		__HAL_TIM_ENABLE_IT(ccd_s->ICG, TIM_IT_CC3);
-		__HAL_TIM_DISABLE_IT(ccd_s->ICG, TIM_IT_CC4);
+		__HAL_TIM_ENABLE_IT(ccd_s->M, TIM_IT_CC2);
 	}
 	return 0;
 }
@@ -44,7 +46,7 @@ HAL_StatusTypeDef set_integration_time(struct ccd *ccd_s, uint32_t us) {
 	ccd_reset(ccd_s);
 	foo = (double)us*80/(double)(ccd_s->ICG->Instance->PSC + 1);
 
-	ccd_s->ICG->Instance->ARR = (uint32_t)foo;
+	ccd_s->ICG->Instance->ARR = (uint32_t)foo - 1;
 
 	return HAL_OK;
 }

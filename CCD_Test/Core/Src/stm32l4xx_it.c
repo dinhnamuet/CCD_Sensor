@@ -56,10 +56,10 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
-extern struct ccd tcd1103;
 /* USER CODE BEGIN EV */
-
+extern struct ccd tcd1103;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -200,6 +200,29 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles TIM1 capture compare interrupt.
+  */
+void TIM1_CC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
+	if (tcd1103.SH.port->IDR & tcd1103.SH.pin_no) {
+		tcd1103.M->Instance->SR = 0x00;
+	} else {
+		if (tcd1103.M->Instance->SR & TIM_SR_CC2IF) {
+			GPIOC->ODR ^= GPIO_PIN_11;
+			tcd1103.M->Instance->SR &= ~TIM_SR_CC2IF;
+		} else {
+			tcd1103.M->Instance->SR &= ~ TIM_SR_UIF;
+		}
+	}
+  /* USER CODE END TIM1_CC_IRQn 0 */
+//  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_CC_IRQn 1 */
+
+  /* USER CODE END TIM1_CC_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM2 global interrupt.
   */
 void TIM2_IRQHandler(void)
@@ -215,7 +238,7 @@ void TIM2_IRQHandler(void)
 		tcd1103.ICG->Instance->SR &= ~TIM_SR_UIF;
 	}
   /* USER CODE END TIM2_IRQn 0 */
-//  HAL_TIM_IRQHandler(&TIM2);
+//  HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
   /* USER CODE END TIM2_IRQn 1 */
